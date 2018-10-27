@@ -1,9 +1,11 @@
 package tk.aldaron.whosthere;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import com.google.android.gms.vision.face.FaceDetector;
 import android.media.Image;
 import android.os.Environment;
 import android.util.Log;
@@ -21,7 +23,7 @@ import java.nio.ByteBuffer;
  * This class takes an image and formats it, and then sends it to
  * the facebook API
  */
-public class ImagePreprocessor {
+public class ImagePreprocessor{
     private static final boolean SAVE_PREVIEW_BITMAP = false;
 
     private Bitmap rgbFrameBitmap;
@@ -42,8 +44,7 @@ public class ImagePreprocessor {
             rgbFrameBitmap = BitmapFactory.decodeStream(new ByteBufferBackedInputStream(bb));
             cropAndRescaleBitmap(rgbFrameBitmap,croppedBitmap,0);
         }
-
-
+        
         saveBitmap(croppedBitmap);
         image.close();
 
