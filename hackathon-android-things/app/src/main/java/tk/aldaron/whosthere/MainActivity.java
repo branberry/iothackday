@@ -1,16 +1,35 @@
 package tk.aldaron.whosthere;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import org.tensorflow.lite.Interpreter;
+import org.tensorflow.lite.TensorFlowLite;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.Collection;
+import java.util.List;
+
+import tk.aldaron.whosthere.classifier.Recognition;
+import tk.aldaron.whosthere.classifier.TensorFlowHelper;
+
 
 /**
  * Skeleton of an Android Things activity.
@@ -35,6 +54,13 @@ import android.widget.ImageView;
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
 
+    /** Tensor flow data files*/
+    private static final String LABELS_FILE = "labels.txt";
+    private static final String MODEL_FILE = "mobilenet_quant_v1_224.tflite";
+
+    private Interpreter mTensorFlowLite;
+    private List<String> mLabels;
+
     /** Camera image capture size */
     private static final int PREVIEW_IMAGE_WIDTH = 640;
     private static final int PREVIEW_IMAGE_HEIGHT = 480;
@@ -50,6 +76,48 @@ public class MainActivity extends Activity {
     private Button mCameraButton;
     private ImagePreprocessor mImagePreprocessor;
     private ImageView mImage;
+
+
+    /**
+     * Initialize the classifier that will be used to process images.
+     */
+    private void initClassifier() {
+        try {
+            mTensorFlowLite =
+                    new Interpreter(TensorFlowHelper.loadModelFile(this, MODEL_FILE));
+            mLabels = TensorFlowHelper.readLabels(this, LABELS_FILE);
+        } catch (IOException e) {
+            Log.w(TAG, "Unable to initialize TensorFlow Lite.", e);
+        }
+    }
+
+    /**
+     * Clean up the resources used by the classifier.
+     */
+    private void destroyClassifier() {
+        mTensorFlowLite.close();
+    }
+
+    private void doRecognize(Bitmap image) {
+        byte[][] confidencePerLabel = new byte[1][mLabels.size()];
+        int [] intValues = new int[TF_INPUT_IMAGE_WIDTH*TF_INPUT_IMAGE_HEIGHT];
+        ByteBuffer imgData = ByteBuffer.allocateDirect(DIM_BATCH_SIZE*TF_INPUT_IMAGE_WIDTH*TF_INPUT_IMAGE_HEIGHT*DIM_PIXEL_SIZE);
+
+        imgData.order(ByteOrder.nativeOrder());
+
+        TensorFlowHelper.convertBitmapToByteBuffer(image, intValues, imgData);
+
+        mTensorFlowLite.run(imgData,confidencePerLabel);
+        Recognition result = TensorFlowHelper.getBestResults(confidencePerLabel, mLabels);
+
+        onPhotoRecognitionReady(result);
+    }
+
+    private void onPhotoRecognitionReady(Recognition result){
+        // send result.toString somewhere
+    }
+
+    
     /**
      * Initialize the camera
      */

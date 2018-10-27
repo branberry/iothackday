@@ -24,10 +24,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.google.firebase:firebase-core:16.0.4'
-    implementation 'com.google.firebase:firebase-database:16.0.3'
-    implementation 'com.google.firebase:firebase-storage:16.0.3'
     implementation 'com.google.android.things.contrib:driver-button:1.0'
+
+    implementation 'org.tensorflow:tensorflow-lite:0.1.7'
+
 
     implementation 'com.google.apis:google-api-services-vision:v1-rev22-1.22.0'
     implementation 'com.google.api-client:google-api-client-android:1.22.0' exclude module: 'httpclient'
