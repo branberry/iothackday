@@ -83,8 +83,7 @@ public class MainActivity extends Activity {
      */
     private void initClassifier() {
         try {
-            mTensorFlowLite =
-                    new Interpreter(TensorFlowHelper.loadModelFile(this, MODEL_FILE));
+            mTensorFlowLite = new Interpreter(TensorFlowHelper.loadModelFile(this, MODEL_FILE));
             mLabels = TensorFlowHelper.readLabels(this, LABELS_FILE);
         } catch (IOException e) {
             Log.w(TAG, "Unable to initialize TensorFlow Lite.", e);
@@ -149,6 +148,7 @@ public class MainActivity extends Activity {
      */
     private void onPhotoReady(Bitmap bitmap) {
         mImage.setImageBitmap(bitmap);
+        doRecognize(bitmap);
     }
 
     /**
@@ -167,6 +167,7 @@ public class MainActivity extends Activity {
         mImage = findViewById(R.id.camera);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         initCamera();
+        initClassifier();
         mCameraButton.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {

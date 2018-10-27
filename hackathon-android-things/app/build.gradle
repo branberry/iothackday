@@ -28,7 +28,6 @@ dependencies {
 
     implementation 'org.tensorflow:tensorflow-lite:0.1.7'
 
-
     implementation 'com.google.apis:google-api-services-vision:v1-rev22-1.22.0'
     implementation 'com.google.api-client:google-api-client-android:1.22.0' exclude module: 'httpclient'
     implementation 'com.google.http-client:google-http-client-gson:1.22.0' exclude module: 'httpclient'
