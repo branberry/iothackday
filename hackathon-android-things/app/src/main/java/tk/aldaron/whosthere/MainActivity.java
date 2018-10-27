@@ -115,6 +115,7 @@ public class MainActivity extends Activity {
 
     private void onPhotoRecognitionReady(Recognition result){
         // send result.toString somewhere
+        
     }
 
     
