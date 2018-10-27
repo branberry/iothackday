@@ -43,6 +43,8 @@ public class ImagePreprocessor {
             cropAndRescaleBitmap(rgbFrameBitmap,croppedBitmap,0);
         }
 
+
+        saveBitmap(croppedBitmap);
         image.close();
 
         return croppedBitmap;
@@ -85,6 +87,7 @@ public class ImagePreprocessor {
         try (FileOutputStream fs = new FileOutputStream(file);
             BufferedOutputStream out = new BufferedOutputStream(fs)) {
             bitmap.compress(Bitmap.CompressFormat.PNG, 99, out);
+            Log.w("Image Location Saved at: ", file.getAbsolutePath());
         } catch (Exception e) {
             Log.w("ImageHelper", "Could not save image for debugging", e);
         }
